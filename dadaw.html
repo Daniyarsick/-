@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Интерактивный таймер обратного отсчета</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+        .timer-container {
+            text-align: center;
+        }
+        .timer {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <div class="timer" id="timer">00:00:00</div>
+        <input type="text" id="time-input" placeholder="Введите время"/>
+        <button id="start-button">Старт</button>
+    </div>
+
+    <script>
+        const timerElement = document.getElementById('timer');
+        const startButton = document.getElementById('start-button');
+        const timeInput = document.getElementById('time-input');
+
+        let countdownInterval;
+
+        startButton.addEventListener('click', () => {
+            clearInterval(countdownInterval); // Очистить предыдущий таймер, если он был установлен
+            const inputTime = moment.duration(`00:${timeInput.value}`);
+            let countdownTime = moment.duration(inputTime.asMilliseconds());
+
+            // Функция обновления таймера
+            const updateTimer = () => {
+                timerElement.textContent = moment.utc(countdownTime.asMilliseconds()).format('HH:mm:ss');
+                countdownTime.subtract(1, 'second');
+
+                if (countdownTime.asMilliseconds() <= 0) {
+                    clearInterval(countdownInterval);
+                    timerElement.textContent = "00:00:00";
+                    alert('Время вышло!');
+                }
+            };
+
+            // Установить интервал для обновления таймера каждую секунду
+            countdownInterval = setInterval(updateTimer, 1000);
+        });
+    </script>
+</body>
+</html>
